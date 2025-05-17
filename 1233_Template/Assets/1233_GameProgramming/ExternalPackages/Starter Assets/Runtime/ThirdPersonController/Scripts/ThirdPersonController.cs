@@ -14,9 +14,10 @@ namespace StarterAssets
 #endif
     public class ThirdPersonController : MonoBehaviour
     {
+        [SerializeField]
         [Header("Player")]
-        [Tooltip("Move speed of the character in m/s")]
-        public float MoveSpeed = 5.0f; //changed move speed
+        [Tooltip("Move speed of the character in m/s")]        
+        private float MoveSpeed = 5.0f; //changed move speed
 
         [Tooltip("Sprint speed of the character in m/s")]
         public float SprintSpeed = 10.335f; //changed sprint speed
