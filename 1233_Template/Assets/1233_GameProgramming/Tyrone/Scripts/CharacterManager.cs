@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class CharacterManaager : MonoBehaviour
+public class CharacterManager : MonoBehaviour
 {
-    [SerializeField]
+    [SerializeField] private GameObject characterPrefab;
     public int Health;
     public TextMeshProUGUI HealthText;
+
+    public void SpawnCharacter()
+    {
+        Vector3 spawnPosition = Vector3.zero;
+        Instantiate(characterPrefab, spawnPosition, Quaternion.identity, transform);
+    }
 
     //create a new input to aim 
 
@@ -17,11 +23,5 @@ public class CharacterManaager : MonoBehaviour
         HealthText.text = "Health: " + Health.ToString();
         
         //store health value 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
