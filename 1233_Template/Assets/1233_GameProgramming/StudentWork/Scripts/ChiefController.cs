@@ -7,13 +7,13 @@ using UnityEngine.InputSystem;
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
  */
 
-namespace StarterAssets
+namespace Chief
 {
-    [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(ChiefController))]
 #if ENABLE_INPUT_SYSTEM
     [RequireComponent(typeof(PlayerInput))]
 #endif
-    public class ThirdPersonController : MonoBehaviour
+    public class ChiefController : MonoBehaviour
     {
         [SerializeField]
         [Header("Player")]
@@ -77,9 +77,19 @@ namespace StarterAssets
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
 
+        [Tooltip("Hpw sensitive the camera look is normally")]
+        [SerializeField] private float NormalSensitivity = 1f;
+
+        [Tooltip("Hpw sensitive the camera look is when the aim state is active")]
+        [SerializeField] private float AimSensitivity = 0.5f;
+
         [Header("Input System Handler")]
         [Tooltip("Sets values from the input system")]
-        [SerializeField] private StarterAssetsInputs _input;
+        [SerializeField] private ChiefInputs Input;
+        [SerializeField] private GameObject MainCamera;
+        [SerializeField] private GameObject PlayerAimCamera;
+       
+
 
         // cinemachine
         private float _cinemachineTargetYaw;
@@ -162,16 +172,46 @@ namespace StarterAssets
 
         private void Update()
         {
-            _hasAnimator = TryGetComponent(out _animator);
-
+           
             JumpAndGravity();
             GroundedCheck();
             Move();
+            //Function to check if player is aiming
+            CheckAimState();
         }
+
+        [SerializeField] private float rotationSpeedWhileAiming = 10f;
 
         private void LateUpdate()
         {
+            if (Input.Aim)
+            {
+                Vector3 cameraForward = Camera.main.transform.forward;
+                cameraForward.y = 0; // Ignore vertical tilt
+                cameraForward.Normalize();
+
+                Quaternion targetRotation = Quaternion.LookRotation(cameraForward);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeedWhileAiming);
+            }
             CameraRotation();
+        }
+
+      
+        private void CheckAimState()
+        {
+            _animator.SetBool("IsAiming", Input.Aim);
+            if (Input.Aim)
+            {
+                // Switch to aim camera
+                PlayerAimCamera.SetActive(true);
+               
+            }
+            else
+            {
+                // Switch to normal camera
+                PlayerAimCamera.SetActive(false);
+                
+            }
         }
 
         private void AssignAnimationIDs()
@@ -201,14 +241,14 @@ namespace StarterAssets
         private void CameraRotation()
         {
             // if there is an input and camera position is not fixed
-            if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
+            if (Input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
             {
                 //Don't multiply mouse input by Time.deltaTime;
                 float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
-             
+                float sensitivityMultiplier = Input.Aim ? AimSensitivity : NormalSensitivity;
 
-                _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier;
-                _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier;
+                _cinemachineTargetYaw += Input.look.x * deltaTimeMultiplier * sensitivityMultiplier;
+                _cinemachineTargetPitch -= Input.look.y * deltaTimeMultiplier * sensitivityMultiplier;
             }
 
             // clamp our rotations so our values are limited 360 degrees
@@ -223,19 +263,19 @@ namespace StarterAssets
         private void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
-
+            float targetSpeed = Input.sprint ? SprintSpeed : MoveSpeed;
+         
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
             // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is no input, set the target speed to 0
-            if (_input.move == Vector2.zero) targetSpeed = 0.0f;
+            if (Input.move == Vector2.zero) targetSpeed = 0.0f;
 
             // a reference to the players current horizontal velocity
             float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
             float speedOffset = 0.1f;
-            float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
+            float inputMagnitude = Input.analogMovement ? Input.move.magnitude : 1f;
 
             // accelerate or decelerate to target speed
             if (currentHorizontalSpeed < targetSpeed - speedOffset ||
@@ -258,11 +298,11 @@ namespace StarterAssets
             if (_animationBlend < 0.01f) _animationBlend = 0f;
 
             // normalise input direction
-            Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+            Vector3 inputDirection = new Vector3(Input.move.x, 0.0f, Input.move.y).normalized;
 
             // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is a move input rotate player when the player is moving
-            if (_input.move != Vector2.zero)
+            if (Input.move != Vector2.zero)
             {
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
                                   _mainCamera.transform.eulerAngles.y;
@@ -309,7 +349,7 @@ namespace StarterAssets
                 }
 
                 // Jump
-                if (_input.jump && _jumpTimeoutDelta <= 0.0f)
+                if (Input.jump && _jumpTimeoutDelta <= 0.0f)
                 {
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
@@ -347,7 +387,7 @@ namespace StarterAssets
                 }
 
                 // if we are not grounded, do not jump
-                _input.jump = false;
+                Input.jump = false;
             }
 
             // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
