@@ -12,9 +12,8 @@ namespace Chief
 		public Vector2 look;
 		public bool jump;
 		public bool sprint = false;
-		public bool Aim { get; private set; }
-		public bool Fire { get; private set; }
-
+		public bool Aim;
+		public bool Fire;
 		[Header("Movement Settings")]
 		public bool analogMovement;
 

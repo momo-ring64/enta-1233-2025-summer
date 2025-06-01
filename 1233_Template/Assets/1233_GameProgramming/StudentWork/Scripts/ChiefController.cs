@@ -113,6 +113,8 @@ namespace Chief
         private int _animIDJump;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
+        private int _animIDDirX;
+        private int _animIDDirY;
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
@@ -204,6 +206,7 @@ namespace Chief
             {
                 // Switch to aim camera
                 PlayerAimCamera.SetActive(true);
+
                
             }
             else
@@ -221,6 +224,8 @@ namespace Chief
             _animIDJump = Animator.StringToHash("Jump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+            _animIDDirX = Animator.StringToHash("Direction X");
+            _animIDDirY = Animator.StringToHash("Direction Y");
         }
 
         private void GroundedCheck()
