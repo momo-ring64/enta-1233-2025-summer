@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Chief
 {
-    public class PhysicsBullet : MonoBehaviour
+    public class PhysicsBullet : BaseBulletManager
     {
 
         [SerializeField] private float ProjectileSpeed;
@@ -14,9 +14,9 @@ namespace Chief
 
         [SerializeField] private Rigidbody Rb;
 
-        private ShooterManager shooterManager;
+        private BaseBulletManager shooterManager;
 
-        public void Initialize(ShooterManager manager)
+        public void Initialize(BaseBulletManager manager)
         {
             shooterManager = manager;
         }
