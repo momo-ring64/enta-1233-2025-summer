@@ -8,9 +8,9 @@ public class BaseBulletManager : MonoBehaviour
 
 
     [Header("Physics Bullets")]
-    [SerializeField] private PhysicsBullet PhysicsBulletPrefab;
+    [SerializeField] protected PhysicsBullet PhysicsBulletPrefab;
     [Header("Particle")]
-    [SerializeField] private RaycastBullet BulletParticle;
+    [SerializeField] protected RaycastBullet BulletParticle;
 
 
     protected void SpawnPhysicsBullet(Transform shootersTransform)
@@ -19,11 +19,13 @@ public class BaseBulletManager : MonoBehaviour
         spawnedBullet.Initialize(this);
     }
 
+    //signals when player shoots at collidable object
     public void OnProjectileCollision(Vector3 position, Vector3 rotation)
     {
         SpawnParticle(position, rotation);
     }
 
+    //spawns particle that lands wherever youre shooting at
     private void SpawnParticle(Vector3 position, Vector3 rotation)
     {
         if (BulletParticle != null)

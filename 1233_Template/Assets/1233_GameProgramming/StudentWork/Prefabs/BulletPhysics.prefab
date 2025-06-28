@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4187579257222154812}
   - component: {fileID: 8424741369455986249}
   - component: {fileID: 8796104428016073611}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BulletPhysics
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,8 +121,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689ebe6cf1331ab4e88214ec95f0e546, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ProjectileSpeed: 10
-  ProjectileDamage: 0
+  PhysicsBulletPrefab: {fileID: 8424741369455986249}
+  BulletParticle: {fileID: 3743361336777295307, guid: cc565a6063959fa408c5b0d998bd0b44, type: 3}
+  ProjectileSpeed: 20
+  ProjectileDamage: 1
   Rb: {fileID: 8796104428016073611}
 --- !u!54 &8796104428016073611
 Rigidbody:

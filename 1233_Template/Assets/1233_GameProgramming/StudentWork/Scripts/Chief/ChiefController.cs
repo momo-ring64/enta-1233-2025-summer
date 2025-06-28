@@ -166,7 +166,9 @@ namespace Chief
         private void Start()
         {
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
-            
+
+            Cursor.lockState = CursorLockMode.Locked;
+
             _hasAnimator = TryGetComponent(out _animator);
             _controller = GetComponent<CharacterController>();
        
@@ -240,8 +242,8 @@ namespace Chief
             {
                 // Switch to aim camera
                 PlayerAimCamera.SetActive(true);
+                
 
-               
             }
             else
             {

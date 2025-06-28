@@ -5,16 +5,34 @@ using UnityEngine.AI;
 
 public class AgentMoveToTransform : MonoBehaviour
 {
-
-    [SerializeField] private Transform MoveToPoint;
     [SerializeField] private NavMeshAgent NavMeshAgent;
+    [SerializeField] private float stopDistance = 3f;
 
-    // Start is called before the first frame update
-    void Update()
+    private Transform playerTransform;
+
+    private void Start()
     {
-        NavMeshAgent.destination = PlayerLocatorSingleton.Instance.transform.position;
+        if (PlayerLocatorSingleton.Instance != null)
+        {
+            playerTransform = PlayerLocatorSingleton.Instance.transform;
+        }
     }
 
-    // Update is called once per frame
-    
+    private void Update()
+    {
+        if (playerTransform == null) return;
+
+        float distance = Vector3.Distance(transform.position, playerTransform.position);
+
+        if (distance > stopDistance)
+        {
+            NavMeshAgent.isStopped = false;
+            NavMeshAgent.destination = playerTransform.position;
+        }
+        else
+        {
+            NavMeshAgent.isStopped = true; // stop movement when in range
+        }
+    }
 }
+

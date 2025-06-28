@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 9127831118819587409}
   - component: {fileID: 5440789587430399926}
   - component: {fileID: 4235694218920106630}
+  - component: {fileID: 4266004089801099711}
   m_Layer: 0
   m_Name: BulletRaycast
   m_TagString: Untagged
@@ -108,6 +109,20 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4266004089801099711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 215299171735401301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fded1a8d0ea7bb846bf00a0bc40511ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ParticleSystem: {fileID: 0}
+  Lifetime: 10
 --- !u!1 &586701394734582802
 GameObject:
   m_ObjectHideFlags: 0

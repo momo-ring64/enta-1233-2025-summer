@@ -3,25 +3,79 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+
+
+//this script is used to bridge objects together allowing them to communicate with each other
 public class CharacterManager : MonoBehaviour
 {
-    [SerializeField] private GameObject characterPrefab;
-    public int Health;
-    public TextMeshProUGUI HealthText;
+    [SerializeField] private PlayerDataManager characterPrefab; //a value of the character prefab to spawn into the scene 
+    [SerializeField] private AIPlayerController npcPrefab;
+    [SerializeField] private int StartingNpcCount;
+    private PlayerDataManager _playerInstance;
+    private  List<AIPlayerController> _npcInstances;
+
+    //for spawn points
+    [SerializeField] private Transform playerSpawnPoint;
+    [SerializeField] private List<Transform> enemySpawnPoints;
+
+
+
+
 
     public void SpawnCharacter()
     {
-        Vector3 spawnPosition = Vector3.zero;
-        Instantiate(characterPrefab, spawnPosition, Quaternion.identity, transform);
+  
+        
+        _npcInstances = new List<AIPlayerController>();
+
+
+        if (playerSpawnPoint != null)
+        {
+            _playerInstance = Instantiate(characterPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation);
+        }
+        else
+        {
+            Debug.LogWarning("Player spawn point is not assigned!");
+        }
+
+        for (int i = 0; i < StartingNpcCount; ++i)
+        {
+            if (enemySpawnPoints.Count > 0)
+            {
+                Transform spawnPoint = enemySpawnPoints[i % enemySpawnPoints.Count]; // Loop through available spawns
+                AIPlayerController spawnedNpc = Instantiate(npcPrefab, spawnPoint.position, spawnPoint.rotation);
+                spawnedNpc.OnDeath = OnBaddieKilled;
+                _npcInstances.Add(spawnedNpc);
+            }
+            else
+            {
+                Debug.LogWarning("No enemy spawn points assigned!");
+            }
+        }
     }
 
-    //create a new input to aim 
+   
 
-    // Start is called before the first frame update
+
     void Start()
     {
-        HealthText.text = "Health: " + Health.ToString();
-        
-        //store health value 
+        if (_playerInstance != null)
+        {
+            _playerInstance.OnDeath += HandlePlayerDeath;
+        }
+    }
+
+    private void HandlePlayerDeath()
+    {
+        Debug.Log("HandlePlayerDeath() called!");
+        // Disable movement, show death screen, etc.
+        Destroy(_playerInstance.gameObject); // Optional: destroy the whole player
+    }
+
+
+    private void OnBaddieKilled()
+    {
+        Debug.Log("BaddieKilled");
+        _playerInstance.TellPlayerBaddieDied();
     }
 }

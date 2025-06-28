@@ -21,8 +21,9 @@ public class AIBulletManager : BaseBulletManager
         //only do it when it sees the player
     }
 
+
     private void Fire()
     {
-        SpawnPhysicsBullet(transform);
+        SpawnPhysicsBullet(BulletSpawnPoint);
     }
 }
