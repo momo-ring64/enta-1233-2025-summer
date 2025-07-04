@@ -25,7 +25,6 @@ public class PlayerDataManager : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log("PLAYER DIED!");
         OnDeath?.Invoke(); // trigger anything listening to the death event
     }
 

@@ -28,7 +28,7 @@ public class CharacterManager : MonoBehaviour
         
         _npcInstances = new List<AIPlayerController>();
 
-
+        //makes player spawn in spawn point
         if (playerSpawnPoint != null)
         {
             _playerInstance = Instantiate(characterPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation);
@@ -42,7 +42,7 @@ public class CharacterManager : MonoBehaviour
         {
             if (enemySpawnPoints.Count > 0)
             {
-                Transform spawnPoint = enemySpawnPoints[i % enemySpawnPoints.Count]; // Loop through available spawns
+                Transform spawnPoint = enemySpawnPoints[i % enemySpawnPoints.Count]; // loop through available spawns
                 AIPlayerController spawnedNpc = Instantiate(npcPrefab, spawnPoint.position, spawnPoint.rotation);
                 spawnedNpc.OnDeath = OnBaddieKilled;
                 _npcInstances.Add(spawnedNpc);

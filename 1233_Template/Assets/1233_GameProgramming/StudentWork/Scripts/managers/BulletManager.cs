@@ -12,7 +12,7 @@ namespace Chief
         [Header("External Scripts")]
         [SerializeField] private Camera Cam;
         [SerializeField] private ChiefInputs Inputs;
-        [SerializeField] private Transform MuzzleTransform; // The point where the bullet spawns
+        [SerializeField] private Transform ShootingPoint; // The point where the bullet spawns
 
 
 
@@ -20,6 +20,13 @@ namespace Chief
         [Header("Raycast")]
         [SerializeField] private LayerMask RaycastMask;
         [SerializeField] private ShootType ShootingCalculation;
+
+        [Header("Sound")]
+        [SerializeField] private AudioSource ShootingSource;
+        [SerializeField] private AudioClip ShootingSound;
+
+        [SerializeField] private ParticleSystem MuzzleFlash;
+
 
 
 
@@ -48,6 +55,7 @@ namespace Chief
                     break;
                 case ShootType.Physics:
                     SpawnPhysicsBullet();
+                    ShootingSource.PlayOneShot(ShootingSound);
                     break;
                 default:
                     Debug.LogError("Fire!");
@@ -58,6 +66,12 @@ namespace Chief
 
         private void SpawnPhysicsBullet()
         {
+
+            if (MuzzleFlash != null)
+            {
+                MuzzleFlash.Play();
+            }
+
             // Raycast from the center of the screen
             Ray ray = Cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
             Vector3 targetPoint;
@@ -68,17 +82,17 @@ namespace Chief
             }
             else
             {
-                // If nothing is hit, just shoot far forward
+                // If nothing hit just shoot far forward
                 targetPoint = ray.GetPoint(1000f);
             }
 
             // Calculate the direction to shoot
-            Vector3 shootDirection = (targetPoint - MuzzleTransform.position).normalized;
+            Vector3 shootDirection = (targetPoint - ShootingPoint.position).normalized;
 
             // Spawn and launch the bullet
             PhysicsBullet spawnedBullet = Instantiate(
                 PhysicsBulletPrefab,
-                MuzzleTransform.position,
+                ShootingPoint.position,
                 Quaternion.LookRotation(shootDirection)
             );
 

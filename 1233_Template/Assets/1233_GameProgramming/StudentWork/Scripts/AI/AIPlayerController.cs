@@ -6,6 +6,7 @@ using UnityEngine;
 public class AIPlayerController : MonoBehaviour
 {
 
+    [Header("Attack Stats")]
     [SerializeField] private float attackRange = 3f;
     [SerializeField] private float attackCooldown = 1.5f;
     [SerializeField] private int attackDamage = 1;
@@ -14,9 +15,22 @@ public class AIPlayerController : MonoBehaviour
     private Transform _playerTransform;
     private PlayerDataManager _playerData;
 
+    [Header("Health")]
     [SerializeField] private int MaxHp;
     [SerializeField] private HealthBarDisplay HealthDisplay;
     [SerializeField] private int DamageLayer = 8;
+
+    [Header("Death Audio")]
+    [SerializeField] private AudioSource DeathSourcePrefab;
+    [SerializeField] private AudioClip DeathSound;
+
+    [Header("Blood")]
+    [SerializeField] private GameObject BloodParticlePrefab;
+
+    [SerializeField] private GameObject DeathEffectPrefab;
+
+
+
 
     private PlayerDataManager playerDataManager;
 
@@ -31,12 +45,13 @@ public class AIPlayerController : MonoBehaviour
     void Start()
     {
         _playerTransform = PlayerLocatorSingleton.Instance?.transform;
-        Debug.Log("Assigned player transform: " + _playerTransform?.name);
-
-        Debug.Log("Found player data: " + _playerData?.name);
-
         playerDataManager = PlayerLocatorSingleton.Instance?.GetComponentInParent<PlayerDataManager>();
+
+        /*
+        Debug.Log("Assigned player transform: " + _playerTransform?.name);
+        Debug.Log("Found player data: " + _playerData?.name);
         Debug.Log("Assigned playerDataManager: " + playerDataManager);
+        */
 
 
         _currentHp = MaxHp;
@@ -47,12 +62,12 @@ public class AIPlayerController : MonoBehaviour
 
             if (_playerData == null)
             {
-                Debug.LogWarning("PlayerDataManager not found in parent of PlayerLocatorSingleton!");
+                Debug.LogWarning("playerdatamanager not found in parent of playerlocatorsingleton!");
             }
         }
         else
         {
-            Debug.LogWarning("PlayerLocatorSingleton.Instance is null! Make sure it's active in the scene.");
+            Debug.LogWarning("playerlocatorsingleton.nstance is null!");
         }
     }
 
@@ -68,6 +83,16 @@ public class AIPlayerController : MonoBehaviour
         {
             Debug.Log("PEW!");
             _currentHp--;
+
+            ContactPoint contact = collision.contacts[0];
+            Vector3 hitPoint = contact.point;
+
+            if (BloodParticlePrefab != null)
+            {
+                GameObject bloodFx = Instantiate(BloodParticlePrefab, hitPoint, Quaternion.LookRotation(contact.normal));
+                Destroy(bloodFx, 0.5f); // Clean up after a few seconds
+            }
+
             OnDamagetaken();
         }
     }
@@ -84,14 +109,14 @@ public class AIPlayerController : MonoBehaviour
 
             if (distance <= attackRange && _attackTimer >= attackCooldown)
             {
-                Debug.Log("AI is in range and ready to attack");
+                Debug.Log("ai is in range and ready to attack");
                 AttackPlayer();
-                _attackTimer = 0f;
+                _attackTimer = 1f;
             }
         }
         else
         {
-            Debug.LogWarning("AI missing transform or playerDataManager");
+            Debug.LogWarning("ai missing transform or playeraatamanager");
         }
     }
 
@@ -111,18 +136,35 @@ public class AIPlayerController : MonoBehaviour
             Debug.LogWarning("PlayerDataManager reference not set!");
         }
     }
-    
+
 
 
     private void OnDamagetaken()
     {
         float currentHpPercent = (float)_currentHp / MaxHp;
         HealthDisplay.UpdateHp(currentHpPercent);
+
         if (_currentHp <= 0)
         {
+            // Spawn audio source at death location
+            AudioSource tempAudio = Instantiate(DeathSourcePrefab, transform.position, Quaternion.identity);
+            tempAudio.PlayOneShot(DeathSound);
 
+            //spawn smoke effect
+            if (DeathEffectPrefab != null)
+            {
+                GameObject smoke = Instantiate(DeathEffectPrefab, transform.position, Quaternion.identity);
+                Destroy(smoke, 3f); // optional: destroy the smoke after it's done
+            }
+
+            // Clean up audio source after clip duration
+            Destroy(tempAudio.gameObject, DeathSound.length);
+
+            // Tell player they got a kill and destroy enemy
             OnDeath?.Invoke();
             Destroy(gameObject);
         }
     }
+
+
 }
