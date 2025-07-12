@@ -25,9 +25,20 @@ public class GameManager : MonoBehaviour
         InitializeGame();
     }
 
-    private void InitializeGame()
+    public void InitializeGame()
     {
-        levelManager.LoadLevelAdditively("Simple Level");
-        characterManager.SpawnCharacter();
+        levelManager.LoadLevelAdditively("SimpleLevel");
+       
     }
+
+    public void QuitGame()
+    {
+        Debug.Log("Quit button pressed!");
+
+        Application.Quit();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }   
 }
