@@ -40,14 +40,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8089564580067757103}
+  - component: {fileID: 5795562241266204671}
   - component: {fileID: 3184833067762699082}
   - component: {fileID: 3213821593615899997}
   - component: {fileID: 43464151363699368}
-  - component: {fileID: 3767795073707251721}
-  - component: {fileID: 8778481046381730192}
   - component: {fileID: 5630817803074151477}
+  - component: {fileID: 2933926938733846694}
   m_Layer: 0
-  m_Name: AgentAI
+  m_Name: AgentAIShuriken
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71,6 +71,33 @@ Transform:
   - {fileID: 490991725014544185}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &5795562241266204671
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1814895404746487604}
+  serializedVersion: 4
+  m_Mass: 75
+  m_Drag: 0.5
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!136 &3184833067762699082
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -78,7 +105,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1814895404746487604}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d1b50fa7e655e2a43a9a58ea398654ed, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -103,7 +130,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 1814895404746487604}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 0.6
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -130,43 +157,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NavMeshAgent: {fileID: 3213821593615899997}
   stopDistance: 5
---- !u!114 &3767795073707251721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1814895404746487604}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 297d1df108abb5e4fa9e31c9458292e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PhysicsBulletPrefab: {fileID: 8424741369455986249, guid: 3818dfb362ff93841a529de5c54c71fd, type: 3}
-  BulletParticle: {fileID: 3743361336777295307, guid: cc565a6063959fa408c5b0d998bd0b44, type: 3}
-  BulletSpawnPoint: {fileID: 666977572747404731}
---- !u!114 &8778481046381730192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1814895404746487604}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5dfca5378beab04c8cfa3034c62d265, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackRange: 3
-  attackCooldown: 1.5
-  attackDamage: 1
-  MaxHp: 5
-  HealthDisplay: {fileID: 5108044938030235556}
-  DamageLayer: 8
-  DeathSourcePrefab: {fileID: -7060982889859109398, guid: 77321b0c8c108f74d9353fed77c0ea81, type: 3}
-  DeathSound: {fileID: 8300000, guid: f52958a8511d2414e9af02739f5014ca, type: 3}
-  BloodParticlePrefab: {fileID: 2753708500932919677, guid: 5ff9a6626f1e7474e8bc9c7d3f119a27, type: 3}
-  DeathEffectPrefab: {fileID: 3085086012725805651, guid: 93d4557c8cb3ec843832c6d00f4933d5, type: 3}
 --- !u!82 &5630817803074151477
 AudioSource:
   m_ObjectHideFlags: 0
@@ -264,6 +254,28 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2933926938733846694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1814895404746487604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa864d16bf9cac94d94ae5a9dab7db78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 3
+  attackCooldown: 1.5
+  attackDamage: 1
+  MaxHp: 5
+  HealthDisplay: {fileID: 5108044938030235556}
+  DamageLayer: 8
+  DeathSourcePrefab: {fileID: 5630817803074151477}
+  DeathSound: {fileID: 8300000, guid: f52958a8511d2414e9af02739f5014ca, type: 3}
+  BloodParticlePrefab: {fileID: 2753708500932919677, guid: 5ff9a6626f1e7474e8bc9c7d3f119a27, type: 3}
+  DeathEffectPrefab: {fileID: 3085086012725805651, guid: 93d4557c8cb3ec843832c6d00f4933d5, type: 3}
 --- !u!1001 &97640077707479250
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -20,7 +20,7 @@ public class AgentMoveToTransform : MonoBehaviour
 
     private void Update()
     {
-        if (playerTransform == null) return;
+        if (NavMeshAgent.enabled == false||playerTransform == null) return;
 
         float distance = Vector3.Distance(transform.position, playerTransform.position);
 

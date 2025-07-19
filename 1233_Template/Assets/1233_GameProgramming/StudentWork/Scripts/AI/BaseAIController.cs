@@ -2,8 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class AIPlayerController : MonoBehaviour
+public abstract class BaseAIController : MonoBehaviour
 {
 
     [Header("Attack Stats")]
@@ -29,10 +30,8 @@ public class AIPlayerController : MonoBehaviour
 
     [SerializeField] private GameObject DeathEffectPrefab;
 
-
-
-
     private PlayerDataManager playerDataManager;
+    [SerializeField] protected NavMeshAgent Agent;
 
 
 
@@ -41,19 +40,11 @@ public class AIPlayerController : MonoBehaviour
 
     // Start is called before the first frame update
  
-
+    //keep
     void Start()
     {
         _playerTransform = PlayerLocatorSingleton.Instance?.transform;
         playerDataManager = PlayerLocatorSingleton.Instance?.GetComponentInParent<PlayerDataManager>();
-
-        /*
-        Debug.Log("Assigned player transform: " + _playerTransform?.name);
-        Debug.Log("Found player data: " + _playerData?.name);
-        Debug.Log("Assigned playerDataManager: " + playerDataManager);
-        */
-
-
         _currentHp = MaxHp;
 
         if (PlayerLocatorSingleton.Instance != null)
@@ -75,7 +66,7 @@ public class AIPlayerController : MonoBehaviour
 
 
 
-
+    //keep
     private void OnCollisionEnter(Collision collision)
     {
 
@@ -97,9 +88,14 @@ public class AIPlayerController : MonoBehaviour
         }
     }
 
+    //keep
     // Update is called once per frame
     private void Update()
     {
+        if (Agent.enabled == false)
+        {
+            return;
+        }
         _attackTimer += Time.deltaTime;
 
         if (_playerTransform != null && playerDataManager != null)
@@ -116,14 +112,14 @@ public class AIPlayerController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("ai missing transform or playeraatamanager");
+            Debug.LogWarning("ai missing transform or playerdatamanager");
         }
     }
 
 
 
 
-
+    //sword
     private void AttackPlayer()
     {
         if (playerDataManager != null)
@@ -137,8 +133,8 @@ public class AIPlayerController : MonoBehaviour
         }
     }
 
-
-
+    protected abstract void ReactToDamage();
+    //keep
     private void OnDamagetaken()
     {
         float currentHpPercent = (float)_currentHp / MaxHp;
@@ -163,6 +159,10 @@ public class AIPlayerController : MonoBehaviour
             // Tell player they got a kill and destroy enemy
             OnDeath?.Invoke();
             Destroy(gameObject);
+        }
+        else
+        {
+            ReactToDamage();
         }
     }
 

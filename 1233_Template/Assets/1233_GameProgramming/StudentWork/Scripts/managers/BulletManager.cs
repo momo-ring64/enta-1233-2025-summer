@@ -72,7 +72,7 @@ namespace Chief
                 MuzzleFlash.Play();
             }
 
-            // Raycast from the center of the screen
+            // raycast from the center of the screen
             Ray ray = Cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
             Vector3 targetPoint;
 
@@ -82,14 +82,14 @@ namespace Chief
             }
             else
             {
-                // If nothing hit just shoot far forward
+                // if nothing hit just shoot far forward
                 targetPoint = ray.GetPoint(1000f);
             }
 
-            // Calculate the direction to shoot
+            // calculate the direction to shoot
             Vector3 shootDirection = (targetPoint - ShootingPoint.position).normalized;
 
-            // Spawn and launch the bullet
+            // spawn and launch the bullet
             PhysicsBullet spawnedBullet = Instantiate(
                 PhysicsBulletPrefab,
                 ShootingPoint.position,
@@ -111,7 +111,7 @@ namespace Chief
             {
                 Vector3 end = hit.point;
 
-                // Spawn particle ray line
+                // spawn particle ray line
                 RaycastBullet bulletVisual = Instantiate(BulletParticle, Vector3.zero, Quaternion.identity);
                 bulletVisual.Initialize(start, end);
 
@@ -119,7 +119,7 @@ namespace Chief
             }
             else
             {
-                // No hit, still draw the ray forward
+                // no hit, still draw the ray forward
                 Vector3 end = start + direction * 100f;
                 RaycastBullet bulletVisual = Instantiate(BulletParticle, Vector3.zero, Quaternion.identity);
                 bulletVisual.Initialize(start, end);

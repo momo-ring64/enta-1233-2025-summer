@@ -1,44 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
 
-public class GameManager : MonoBehaviour
-{
-
-
-    public static GameManager Instance {  get; private set; }
-
-    [SerializeField] private CharacterManager characterManager;
-    [SerializeField] private LevelManager levelManager;
-
-    private void Awake()
+    public class GameManager : MonoBehaviour
     {
-        if (Instance != null && Instance != this)
+
+
+        public static GameManager Instance {  get; private set; }
+
+        [SerializeField] private CharacterManager characterManager;
+        [SerializeField] private LevelManager levelManager;
+
+        private void Awake()
         {
-            Destroy(gameObject);
-            return;
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            InitializeGame();
         }
 
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-
-        InitializeGame();
-    }
-
-    public void InitializeGame()
-    {
-        levelManager.LoadLevelAdditively("SimpleLevel");
+        public void InitializeGame()
+        {
+            levelManager.LoadLevelAdditively("SimpleLevel");
        
+        }
+
+        public void QuitGame()
+        {
+            Debug.Log("Quit button pressed!");
+
+            Application.Quit();
+
+    #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+    #endif
+        }   
     }
-
-    public void QuitGame()
-    {
-        Debug.Log("Quit button pressed!");
-
-        Application.Quit();
-
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
-    }   
-}
