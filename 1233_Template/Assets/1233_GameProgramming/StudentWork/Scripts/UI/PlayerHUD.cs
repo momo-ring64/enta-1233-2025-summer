@@ -8,8 +8,10 @@ using TMPro;
 public class PlayerHUD : HealthBarDisplay
 {
 
-    [SerializeField] private TMP_Text HealthText;
-    [SerializeField] private TMP_Text ScoreText;
+    [SerializeField] private TMP_Text healthText;
+    [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private TMP_Text timerText;
+    
 
     private void Start()
     {
@@ -17,17 +19,23 @@ public class PlayerHUD : HealthBarDisplay
     }
     public void OnHealthUpdated(int currentHealth, int maxHealth)
     {
-        HealthText.text = $"{currentHealth}/{maxHealth}";
+        healthText.text = $"{currentHealth}/{maxHealth}";
 
         // Update the red health bar fill
         float percent = (float)currentHealth / maxHealth;
         UpdateHp(percent);
     }
-
+    
 
     public void OnScoreUpdated(int score)
     {
-        ScoreText.text = $"{score} baddies killed!";
+        scoreText.text = $"{score} baddies killed!";
+    }
+
+    private void TimeUpdated(string time)
+    {
+
+        timerText.text = $"Time: {time}";
     }
 
 }

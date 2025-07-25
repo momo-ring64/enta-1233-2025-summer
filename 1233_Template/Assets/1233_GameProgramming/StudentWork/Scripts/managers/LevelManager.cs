@@ -15,4 +15,9 @@ public class LevelManager : MonoBehaviour
     {
         SceneManager.LoadScene(levelName, LoadSceneMode.Additive);
     }
+
+    public void UnloadScene(string levelName)
+    {
+        SceneManager.UnloadSceneAsync(levelName);
+    }
 }

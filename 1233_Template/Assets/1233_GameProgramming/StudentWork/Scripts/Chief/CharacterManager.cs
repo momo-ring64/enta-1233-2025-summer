@@ -10,22 +10,30 @@ public class CharacterManager : MonoBehaviour
 {
     [SerializeField] private PlayerDataManager characterPrefab; //a value of the character prefab to spawn into the scene 
     [SerializeField] private BaseAIController npcPrefab;
-    [SerializeField] private int StartingNpcCount;
+    [SerializeField] private int startingNpcCount;
     private PlayerDataManager _playerInstance;
     private  List<BaseAIController> _npcInstances;
+    [SerializeField] private Camera gameEndCamera;
 
     //for spawn points
     [Header("Spawn Points")]
     [SerializeField] private Transform playerSpawnPoint;
     [SerializeField] private List<Transform> enemySpawnPoints;
 
-    [Header("Player Death Audio")]
-    [SerializeField] private AudioSource DeathSourcePrefab;
-    [SerializeField] private AudioClip DeathSound;
+    [Header("Player Game End Audio")]
+    [SerializeField] private AudioSource deathSourcePrefab;
+    [SerializeField] private AudioClip deathSound;
 
-    [Header("Player Death Screen")]
-    [SerializeField] private GameObject GameEndScreenUI;
-    [SerializeField] private Camera GameEndCamera;
+    [Header("Player Game Over Screen")]
+    [SerializeField] private GameObject gameOverScreenCanvas;
+    [SerializeField] private AudioSource gameOverSoundSource;
+    [SerializeField] private AudioClip gameOverSound;
+
+    [Header("Player Victory Screen")]
+    [SerializeField] private GameObject victoryScreenCanvas;
+    [SerializeField] private AudioSource victorySoundSource;
+    [SerializeField] private AudioClip victorySound;
+    [SerializeField] private TMP_Text timerText;
 
 
     private int _aliveEnemies;
@@ -53,7 +61,7 @@ public class CharacterManager : MonoBehaviour
 
         _aliveEnemies = 0;
 
-        for (int i = 0; i < StartingNpcCount; ++i)
+        for (int i = 0; i < startingNpcCount; ++i)
         {
             if (enemySpawnPoints.Count > 0)
             {
@@ -61,7 +69,7 @@ public class CharacterManager : MonoBehaviour
                 BaseAIController spawnedNpc = Instantiate(npcPrefab, spawnPoint.position, spawnPoint.rotation);
                 spawnedNpc.OnDeath = OnBaddieKilled;
                 _npcInstances.Add(spawnedNpc);
-                _aliveEnemies++; // Count it
+                _aliveEnemies++; 
             }
         }
 
@@ -69,56 +77,66 @@ public class CharacterManager : MonoBehaviour
 
 
 
+    private void Start()
+    {
+        gameEndCamera.gameObject.SetActive(false);
+        SpawnCharacter();
+    }
 
+    private void ShowGameOverScreen()
+    {
+        Debug.Log("All enemies defeated!");
+        Cursor.lockState = CursorLockMode.None;
+        Destroy(_playerInstance.gameObject);
+
+        if (gameOverScreenCanvas != null)
+        {
+            gameOverScreenCanvas.SetActive(true);
+        }
+
+        //func for turning on VictoryCanvas then unlocking the cursor
+    }
+    private void ShowVictoryScreen(string time)
+    {
+        Debug.Log("All enemies defeated!");
+        Cursor.lockState = CursorLockMode.None;
+        Destroy(_playerInstance.gameObject);
+
+        if (victoryScreenCanvas != null)
+        {
+            victoryScreenCanvas.SetActive(true);
+        }
+        timerText.text = $"Time: {time}";
+    }
 
 
     private void HandlePlayerDeath()
     {
-
-        AudioSource tempAudio = Instantiate(DeathSourcePrefab, transform.position, Quaternion.identity);
-        tempAudio.PlayOneShot(DeathSound);
+        //death sound
+        AudioSource tempAudio = Instantiate(deathSourcePrefab, transform.position, Quaternion.identity);
+        tempAudio.PlayOneShot(deathSound);
 
 
         Debug.Log("HandlePlayerDeath() called!");
-
-        if (GameEndScreenUI != null)
-        {
-            GameEndScreenUI.SetActive(true);
-        }
         
-
-        // Get current player camera
         Camera playerCam = _playerInstance.GetComponentInChildren<Camera>();
-        if (playerCam != null && GameEndCamera != null)
+        if (playerCam != null && gameEndCamera != null)
         {
-            // Move death camera to player camera's position and rotation
-            GameEndCamera.transform.position = playerCam.transform.position;
-            GameEndCamera.transform.rotation = playerCam.transform.rotation;
-
-            // Enable death camera
-            GameEndCamera.gameObject.SetActive(true);
-
-
-            // Optional: disable audio listener on player cam if needed
+            gameEndCamera.transform.position = playerCam.transform.position;
+            gameEndCamera.transform.rotation = playerCam.transform.rotation;
+           
+            gameEndCamera.gameObject.SetActive(true);
+      
             AudioListener playerAudio = playerCam.GetComponent<AudioListener>();
             if (playerAudio != null) playerAudio.enabled = false;
         }
-
-     
-
-
-        Destroy(_playerInstance.gameObject);
+        ShowGameOverScreen();
+        gameOverSoundSource.PlayOneShot(gameOverSound);
     }
 
-    private void ShowGameEndScreen()
-    {
-        Debug.Log("All enemies defeated!");
 
-        if (GameEndScreenUI != null)
-        {
-            GameEndScreenUI.SetActive(true);
-        }
-    }
+    //func for turning on GameOverCanvas then unlocking the cursor
+    
 
 
     private void OnBaddieKilled()
@@ -130,8 +148,21 @@ public class CharacterManager : MonoBehaviour
 
         if (_aliveEnemies <= 0)
         {
-            ShowGameEndScreen();
+            Camera playerCam = _playerInstance.GetComponentInChildren<Camera>();
+            if (playerCam != null && gameEndCamera != null)
+            {
+                gameEndCamera.transform.position = playerCam.transform.position;
+                gameEndCamera.transform.rotation = playerCam.transform.rotation;
+
+                gameEndCamera.gameObject.SetActive(true);
+
+                AudioListener playerAudio = playerCam.GetComponent<AudioListener>();
+                if (playerAudio != null) playerAudio.enabled = false;
+            }
+            //ShowVictoryScreen(); this is causing an error CS7036: There is no argument given that corresponds to the required parameter
+            victorySoundSource.PlayOneShot(victorySound);
         }
     }
+
 
 }
