@@ -522,6 +522,7 @@ MonoBehaviour:
   HealthBarFill: {fileID: 1591431361322626650}
   healthText: {fileID: 9195530537534426609}
   scoreText: {fileID: 326674691752272690}
+  timerText: {fileID: 8659946615838962425}
 --- !u!114 &4206841088678727259
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -538,7 +539,7 @@ MonoBehaviour:
   baddieValue: 1
   maxHealth: 10
   timerText: {fileID: 8659946615838962425}
-  remainingTime: 60
+  remainingTime: 30
 --- !u!1 &2727654384633587541
 GameObject:
   m_ObjectHideFlags: 0
@@ -1000,8 +1001,8 @@ MonoBehaviour:
   PlayerHUD: {fileID: 2631837731139905784}
   baddieValue: 1
   maxHealth: 10
-  timerText: {fileID: 0}
-  remainingTime: 0
+  timerText: {fileID: 8659946615838962425}
+  remainingTime: 30
 --- !u!1 &5975746209298409920
 GameObject:
   m_ObjectHideFlags: 0

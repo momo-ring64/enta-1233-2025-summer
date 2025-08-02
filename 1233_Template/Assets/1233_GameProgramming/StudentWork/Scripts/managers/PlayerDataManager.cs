@@ -17,6 +17,8 @@ public class PlayerDataManager : MonoBehaviour
 
     public Action OnDeath;
     public Action NoTime;
+    public Action<string> OnTimeOver; // Will send time string
+
 
     void Start()
     {
@@ -37,11 +39,22 @@ public class PlayerDataManager : MonoBehaviour
         {
             remainingTime = 0;
             timerText.color = Color.red;
+
+            
+            OnTimeOver?.Invoke(finalTime);
         }
 
-        
-        
+        timerText.text = GetFormattedTime();
     }
+
+    //method to format time
+    public string GetFormattedTime()
+    {
+        int minutes = Mathf.FloorToInt(remainingTime / 60);
+        int seconds = Mathf.FloorToInt(remainingTime % 60);
+        return string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
 
 
 
@@ -91,5 +104,5 @@ public class PlayerDataManager : MonoBehaviour
             timerText.color = Color.red;
         }
     }
-   
+
 }

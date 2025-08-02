@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -8,12 +8,14 @@ using UnityEngine;
 //this script is used to bridge objects together allowi ng them to communicate with each other
 public class CharacterManager : MonoBehaviour
 {
+    private PlayerDataManager _playerInstance;
+    private List<BaseAIController> _npcInstances;
     [SerializeField] private PlayerDataManager characterPrefab; //a value of the character prefab to spawn into the scene 
     [SerializeField] private BaseAIController npcPrefab;
     [SerializeField] private int startingNpcCount;
-    private PlayerDataManager _playerInstance;
-    private  List<BaseAIController> _npcInstances;
     [SerializeField] private Camera gameEndCamera;
+
+
 
     //for spawn points
     [Header("Spawn Points")]
@@ -28,12 +30,13 @@ public class CharacterManager : MonoBehaviour
     [SerializeField] private GameObject gameOverScreenCanvas;
     [SerializeField] private AudioSource gameOverSoundSource;
     [SerializeField] private AudioClip gameOverSound;
+    [SerializeField] private TMP_Text deathTimerText;
 
     [Header("Player Victory Screen")]
     [SerializeField] private GameObject victoryScreenCanvas;
     [SerializeField] private AudioSource victorySoundSource;
     [SerializeField] private AudioClip victorySound;
-    [SerializeField] private TMP_Text timerText;
+    [SerializeField] private TMP_Text VictoryTimerText;
 
 
     private int _aliveEnemies;
@@ -83,31 +86,32 @@ public class CharacterManager : MonoBehaviour
         SpawnCharacter();
     }
 
-    private void ShowGameOverScreen()
-    {
-        Debug.Log("All enemies defeated!");
-        Cursor.lockState = CursorLockMode.None;
-        Destroy(_playerInstance.gameObject);
-
-        if (gameOverScreenCanvas != null)
-        {
-            gameOverScreenCanvas.SetActive(true);
-        }
-
-        //func for turning on VictoryCanvas then unlocking the cursor
-    }
     private void ShowVictoryScreen(string time)
     {
-        Debug.Log("All enemies defeated!");
+        Debug.Log("Victory!");
         Cursor.lockState = CursorLockMode.None;
         Destroy(_playerInstance.gameObject);
 
         if (victoryScreenCanvas != null)
-        {
             victoryScreenCanvas.SetActive(true);
-        }
-        timerText.text = $"Time: {time}";
+
+        if (VictoryTimerText != null)
+            VictoryTimerText.text = $"Time: {time}";
     }
+
+    private void ShowGameOverScreen(string time)
+    {
+        Debug.Log("Player died!");
+        Cursor.lockState = CursorLockMode.None;
+        Destroy(_playerInstance.gameObject);
+
+        if (gameOverScreenCanvas != null)
+            gameOverScreenCanvas.SetActive(true);
+
+        if (deathTimerText != null)
+            deathTimerText.text = $"Time: {time}";
+    }
+
 
 
     private void HandlePlayerDeath()
@@ -130,39 +134,46 @@ public class CharacterManager : MonoBehaviour
             AudioListener playerAudio = playerCam.GetComponent<AudioListener>();
             if (playerAudio != null) playerAudio.enabled = false;
         }
-        ShowGameOverScreen();
+        string time = _playerInstance.GetFormattedTime();
+        ShowGameOverScreen(time);
+
         gameOverSoundSource.PlayOneShot(gameOverSound);
     }
 
 
     //func for turning on GameOverCanvas then unlocking the cursor
-    
+
 
 
     private void OnBaddieKilled()
     {
         Debug.Log("BaddieKilled");
         _playerInstance.TellPlayerBaddieDied();
-
         _aliveEnemies--;
 
         if (_aliveEnemies <= 0)
         {
+            // get the formatted time from the player instance
+            string levelTime = _playerInstance.GetFormattedTime();
+
+            // setup camera when win game
             Camera playerCam = _playerInstance.GetComponentInChildren<Camera>();
             if (playerCam != null && gameEndCamera != null)
             {
                 gameEndCamera.transform.position = playerCam.transform.position;
                 gameEndCamera.transform.rotation = playerCam.transform.rotation;
-
                 gameEndCamera.gameObject.SetActive(true);
 
                 AudioListener playerAudio = playerCam.GetComponent<AudioListener>();
                 if (playerAudio != null) playerAudio.enabled = false;
             }
-            //ShowVictoryScreen(); this is causing an error CS7036: There is no argument given that corresponds to the required parameter
+
+            string time = _playerInstance.GetFormattedTime();
+            ShowVictoryScreen(time);
             victorySoundSource.PlayOneShot(victorySound);
         }
     }
+
 
 
 }

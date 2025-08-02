@@ -32,10 +32,10 @@ public class PlayerHUD : HealthBarDisplay
         scoreText.text = $"{score} baddies killed!";
     }
 
-    private void TimeUpdated(string time)
+    public void TimeUpdated(string time)
     {
-
         timerText.text = $"Time: {time}";
     }
+
 
 }
