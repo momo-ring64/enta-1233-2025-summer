@@ -40,7 +40,7 @@ public class PlayerDataManager : MonoBehaviour
             remainingTime = 0;
             timerText.color = Color.red;
 
-            
+            string finalTime = GetFormattedTime();
             OnTimeOver?.Invoke(finalTime);
         }
 

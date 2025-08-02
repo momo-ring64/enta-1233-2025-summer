@@ -1,0 +1,10 @@
+https://github.com/momo-ring64/enta-1233-2025-summer.git
+
+what i didnt finish:
+-animations
+-added second ai enemy
+-ammo system
+-created own spawning manager instead of it all in the charactermanager
+-more complex ai(patrol,idle, etc)
+-sensitivity slider
+-additional sound effects(getting hit, enemy attack)
