@@ -38,6 +38,11 @@ public class CharacterManager : MonoBehaviour
     [SerializeField] private AudioClip victorySound;
     [SerializeField] private TMP_Text VictoryTimerText;
 
+    [Header("Player Damage Audio")]
+    [SerializeField] private AudioSource damageAudioSource;
+    [SerializeField] private AudioClip damageClip;
+
+
 
     private int _aliveEnemies;
 
@@ -75,6 +80,15 @@ public class CharacterManager : MonoBehaviour
                 _aliveEnemies++; 
             }
         }
+
+        _playerInstance.OnTakeDamage += () =>
+        {
+            if (damageAudioSource != null && damageClip != null)
+            {
+                damageAudioSource.PlayOneShot(damageClip);
+            }
+        };
+
 
     }
 
@@ -141,7 +155,7 @@ public class CharacterManager : MonoBehaviour
     }
 
 
-    //func for turning on GameOverCanvas then unlocking the cursor
+ 
 
 
 
@@ -153,7 +167,6 @@ public class CharacterManager : MonoBehaviour
 
         if (_aliveEnemies <= 0)
         {
-            // get the formatted time from the player instance
             string levelTime = _playerInstance.GetFormattedTime();
 
             // setup camera when win game

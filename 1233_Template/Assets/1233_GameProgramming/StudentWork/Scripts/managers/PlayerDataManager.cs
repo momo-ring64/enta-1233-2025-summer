@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -17,7 +17,8 @@ public class PlayerDataManager : MonoBehaviour
 
     public Action OnDeath;
     public Action NoTime;
-    public Action<string> OnTimeOver; // Will send time string
+    public Action<string> OnTimeOver;
+    public Action OnTakeDamage;
 
 
     void Start()
@@ -71,8 +72,10 @@ public class PlayerDataManager : MonoBehaviour
         _playerscore += score;
         PlayerHUD.OnScoreUpdated(_playerscore);
 
-        // Heal to full when a baddie dies
-        currentHealth = maxHealth;
+        // heal only two health when kill enemy
+        currentHealth += 2;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
         PlayerHUD.OnHealthUpdated(currentHealth, maxHealth);
     }
 
@@ -88,13 +91,15 @@ public class PlayerDataManager : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         PlayerHUD.OnHealthUpdated(currentHealth, maxHealth);
 
+        OnTakeDamage?.Invoke(); 
+
         if (currentHealth <= 0)
         {
             Debug.Log("Player died!");
             Die();
-            // Optional: handle death (respawn, game over, etc.)
         }
     }
+
 
     public void RunOutTime()
     {

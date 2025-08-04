@@ -22,6 +22,9 @@ public class AISwordController : BaseAIController
     }
     private IEnumerator ApplyKnockback(Vector3 force)
     {
+        if (_isDead || CharacterRigidBody.isKinematic) yield break;
+
+
         yield return null;
         Agent.enabled = false;
         CharacterRigidBody.useGravity = true;
@@ -32,24 +35,23 @@ public class AISwordController : BaseAIController
         yield return new WaitUntil(() => CharacterRigidBody.velocity.magnitude < StillThreshold);
         yield return new WaitForSeconds(0.25f);
 
+        if (_isDead) yield break;
+
         CharacterRigidBody.velocity = Vector3.zero;
         CharacterRigidBody.angularVelocity = Vector3.zero;
         CharacterRigidBody.useGravity = false;
         CharacterRigidBody.isKinematic = true;
         Agent.Warp(transform.position);
         Agent.enabled = true;
-
-        yield return null;
-
-
-
-
-
     }
+
 
 
     protected override void ReactToDamage()
     {
+        if (this == null || !gameObject.activeInHierarchy) return; // prevent knockback after death
         StartCoroutine(ApplyKnockback(new Vector3(KnockbackStrength, KnockbackStrength, KnockbackStrength)));
     }
+
+
 }

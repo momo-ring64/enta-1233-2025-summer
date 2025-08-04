@@ -35,12 +35,16 @@ public abstract class BaseAIController : MonoBehaviour
 
 
 
+    public Coroutine MoveCoroutine { get; private set; }
+    protected bool _isDead = false;
+
+
+
     public Action OnDeath;
     private int _currentHp;
 
-    // Start is called before the first frame update
- 
-    //keep
+   
+
     void Start()
     {
         _playerTransform = PlayerLocatorSingleton.Instance?.transform;
@@ -69,7 +73,7 @@ public abstract class BaseAIController : MonoBehaviour
     //keep
     private void OnCollisionEnter(Collision collision)
     {
-
+        if (_isDead) return;
         if (collision.gameObject.layer == DamageLayer)
         {
             Debug.Log("PEW!");
@@ -81,15 +85,15 @@ public abstract class BaseAIController : MonoBehaviour
             if (BloodParticlePrefab != null)
             {
                 GameObject bloodFx = Instantiate(BloodParticlePrefab, hitPoint, Quaternion.LookRotation(contact.normal));
-                Destroy(bloodFx, 0.5f); // Clean up after a few seconds
+                Destroy(bloodFx, 0.5f);
             }
 
             OnDamagetaken();
         }
     }
 
-    //keep
-    // Update is called once per frame
+
+
     private void Update()
     {
         if (Agent.enabled == false)
@@ -119,7 +123,7 @@ public abstract class BaseAIController : MonoBehaviour
 
 
 
-    //sword
+
     private void AttackPlayer()
     {
         if (playerDataManager != null)
@@ -134,37 +138,51 @@ public abstract class BaseAIController : MonoBehaviour
     }
 
     protected abstract void ReactToDamage();
-    //keep
+ 
     private void OnDamagetaken()
     {
+        if (_isDead) return;
+
+        // Disable all colliders to prevent future collisions
+        foreach (Collider col in GetComponentsInChildren<Collider>())
+        {
+            if (col.gameObject.CompareTag("Hitbox"))
+                col.enabled = false;
+        }
+
+
+        // Optional: Stop knockback if it's still running
+        if (this is AISwordController swordAI && swordAI.MoveCoroutine != null)
+        {
+            swordAI.StopCoroutine(swordAI.MoveCoroutine);
+        }
+
+
         float currentHpPercent = (float)_currentHp / MaxHp;
         HealthDisplay.UpdateHp(currentHpPercent);
 
         if (_currentHp <= 0)
         {
-            // Spawn audio source at death location
+            _isDead = true; 
+
+            // death logic
             AudioSource tempAudio = Instantiate(DeathSourcePrefab, transform.position, Quaternion.identity);
             tempAudio.PlayOneShot(DeathSound);
 
-            //spawn smoke effect
             if (DeathEffectPrefab != null)
             {
                 GameObject smoke = Instantiate(DeathEffectPrefab, transform.position, Quaternion.identity);
-                Destroy(smoke, 3f); // optional: destroy the smoke after it's done
+                Destroy(smoke, 3f);
             }
 
-            // Clean up audio source after clip duration
             Destroy(tempAudio.gameObject, DeathSound.length);
 
-            // Tell player they got a kill and destroy enemy
             OnDeath?.Invoke();
-            Destroy(gameObject);
+            Destroy(gameObject); 
         }
         else
         {
             ReactToDamage();
         }
     }
-
-
 }
